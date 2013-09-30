@@ -1,4 +1,14 @@
+*.iml
+*.ipr
+*.iws
+.idea
 *.class
+tmp
+temp
+target
+out
+test-result
+logs
 
 # Package Files #
 *.jar
