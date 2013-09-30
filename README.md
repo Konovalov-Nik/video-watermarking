@@ -1,4 +1,4 @@
 image-watermarking
 ==================
 
-Applyiong watermark to an image
+Applying watermark to an image
