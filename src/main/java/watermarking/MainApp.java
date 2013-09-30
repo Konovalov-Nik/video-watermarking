@@ -33,7 +33,7 @@ public class MainApp extends Application {
         Parent rootNode = (Parent) loader.load();
 
         log.debug("Showing JFX scene");
-        Scene scene = new Scene(rootNode, 500, 350);
+        Scene scene = new Scene(rootNode, 500, 265);
         scene.getStylesheets().add("/styles/styles.css");
 
         stage.setTitle("Watermarking");

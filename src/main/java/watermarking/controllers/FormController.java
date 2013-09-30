@@ -24,7 +24,6 @@ import watermarking.allignments.VerticalAlignment;
 import watermarking.providers.ImageProvider;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
@@ -38,7 +37,7 @@ public class FormController {
     private Core core;
 
     @FXML private TextField watermarkFileNameField;
-    @FXML private TextField inputFileNameField;
+    @FXML private TextField originalFileNameField;
     @FXML private Button applyButton;
     @FXML private Button browseOriginalButton;
     @FXML private Button browseWatermarkButton;
@@ -87,10 +86,42 @@ public class FormController {
         }
     }
 
-    public void loadWatermark(ActionEvent event) {
+    public void browseOriginal(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choose original image.");
+        File file = chooser.showOpenDialog(stage);
+        renderAndSaveOriginal(file);
+    }
+
+    public void browseWatermark(ActionEvent event) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choose watermark image.");
         File file = chooser.showOpenDialog(stage);
+        renderAndSaveWatermark(file);
+    }
+
+    public void reloadOriginal(ActionEvent event) {
+        File file = new File(originalFileNameField.getText());
+        renderAndSaveOriginal(file);
+    }
+
+    public void reloadWatermark(ActionEvent event) {
+        File file = new File(watermarkFileNameField.getText());
+        renderAndSaveWatermark(file);
+    }
+
+    public void renderAndSaveOriginal(File file) {
+        ImageProvider baseImageProvider = core.getBaseImageProvider();
+        if (file != null && isImage(file)) {
+            String path = file.getAbsolutePath();
+            baseImageProvider.reset();
+            originalFileNameField.setText(path);
+            baseImageProvider.setSource(path);
+            loadImages();
+        }
+    }
+
+    public void renderAndSaveWatermark(File file) {
         ImageProvider watermarkImageProvider = core.getWatermarkImageProvider();
         if (file != null && isImage(file)) {
             String path = file.getAbsolutePath();
@@ -101,17 +132,29 @@ public class FormController {
         }
     }
 
-    public void loadOriginal(ActionEvent event) {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Choose original image.");
-        File file = chooser.showOpenDialog(stage);
-        ImageProvider baseImageProvider = core.getBaseImageProvider();
-        if (file != null && isImage(file)) {
-            String path = file.getAbsolutePath();
-            baseImageProvider.reset();
-            inputFileNameField.setText(path);
-            baseImageProvider.setSource(path);
-            loadImages();
+    public void saveResultFile(ActionEvent event) {
+        errorLabel.setText("");
+        try {
+            core.process();
+
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Save result.");
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG files", "*.png", "(*.png)"));
+            File file = chooser.showSaveDialog(stage);
+
+            if (file == null) {
+                return;
+            }
+
+            try {
+                ImageIO.write(core.getCombinedImage(), "png", file);
+            } catch (IOException e) {
+                log.warn("Exception while saving image", e);
+                errorLabel.setText("Could not save result image");
+            }
+        } catch (Exception e) {
+            log.warn("Exception while saving image", e);
+            errorLabel.setText(e.getMessage());
         }
     }
 
@@ -119,17 +162,17 @@ public class FormController {
         return true;
     }
 
-    public void applyWatermark(ActionEvent event) {
+    public void showPreview(ActionEvent event) {
         errorLabel.setText("");
         try {
             core.process();
-            showPreview();
+            buildAndShowPreviewForm();
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());
         }
     }
 
-    private void showPreview() throws IOException {
+    private void buildAndShowPreviewForm() throws IOException {
 
         BufferedImage previewImage = core.getCombinedImage();
         int previewImageWidth = previewImage.getWidth();

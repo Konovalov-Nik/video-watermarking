@@ -14,10 +14,12 @@
   <Label layoutX="14.0" layoutY="31.0" text="Original file: " />
   <TextField fx:id="watermarkFileNameField" layoutX="114.0" layoutY="64.0" prefColumnCount="30" prefWidth="237.0" />
   <Label layoutX="14.0" layoutY="67.0" text="Watermark: " />
-  <TextField fx:id="inputFileNameField" layoutX="114.0" layoutY="28.0" prefColumnCount="30" prefWidth="237.0" />
-  <Button fx:id="applyButton" layoutX="409.0" layoutY="177.0" onAction="#applyWatermark" prefWidth="77.0" text="Preview" />
-  <Button fx:id="browseOriginalButton" cancelButton="false" defaultButton="false" layoutX="361.0" layoutY="29.0" minWidth="25.0" mnemonicParsing="false" onAction="#loadOriginal" prefWidth="37.0" text="..." />
-  <Button fx:id="browseWatermarkButton" layoutX="360.0" layoutY="65.0" mnemonicParsing="false" onAction="#loadWatermark" prefWidth="37.0" text="..." />
+  <TextField fx:id="originalFileNameField" layoutX="114.0" layoutY="28.0" prefColumnCount="30" prefWidth="237.0" />
+  <Button fx:id="showPreviewButton" layoutX="409.0" layoutY="159.0" onAction="#showPreview" prefWidth="77.0" text="Preview" />
+  <Button fx:id="browseOriginalButton" cancelButton="false" defaultButton="false" layoutX="361.0" layoutY="29.0" minWidth="25.0" mnemonicParsing="false" onAction="#browseOriginal" prefWidth="37.0" text="..." />
+  <Button fx:id="browseWatermarkButton" layoutX="360.0" layoutY="65.0" mnemonicParsing="false" onAction="#browseWatermark" prefWidth="37.0" text="..." />
+  <Button fx:id="reloadOriginalButton" layoutX="409.0" layoutY="28.0" minWidth="29.0" mnemonicParsing="false" onAction="#reloadOriginal" prefWidth="77.0" text="Reload" />
+  <Button fx:id="reloadWatermarkButton" layoutX="409.0" layoutY="65.0" minWidth="29.0" mnemonicParsing="false" onAction="#reloadWatermark" prefWidth="77.0" text="Reload" />
   <padding>
     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
   </padding>
@@ -40,6 +42,5 @@
   <Label layoutX="14.0" layoutY="106.0" text="Original Image" />
   <Label layoutX="150.0" layoutY="106.0" text="Watermark Image" />
   <Label fx:id="errorLabel" layoutX="14.0" layoutY="242.0" text="" textFill="#cc0000" />
-  <Button layoutX="409.0" layoutY="28.0" minWidth="29.0" mnemonicParsing="false" prefWidth="77.0" text="Reload" />
-  <Button layoutX="409.0" layoutY="65.0" minWidth="29.0" mnemonicParsing="false" prefWidth="77.0" text="Reload" />
+  <Button fx:id="saveButton" layoutX="409.0" layoutY="200.0" mnemonicParsing="false" prefWidth="77.0" text="Save" onAction="#saveResultFile" />
 </Pane>
