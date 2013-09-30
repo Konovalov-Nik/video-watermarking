@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.*?>
+
+<Pane id="rootPane" maxHeight="-1.0" maxWidth="-1.0" minHeight="250.0" minWidth="500.0" prefHeight="263.310546875" prefWidth="500.0" styleClass="main-panel" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <Label layoutX="14.0" layoutY="31.0" text="Original file: " />
+  <TextField fx:id="watermarkFileNameField" layoutX="114.0" layoutY="64.0" prefColumnCount="30" prefWidth="237.0" />
+  <Label layoutX="14.0" layoutY="67.0" text="Watermark: " />
+  <TextField fx:id="inputFileNameField" layoutX="114.0" layoutY="28.0" prefColumnCount="30" prefWidth="237.0" />
+  <Button fx:id="applyButton" layoutX="409.0" layoutY="177.0" onAction="#applyWatermark" prefWidth="77.0" text="Preview" />
+  <Button fx:id="browseOriginalButton" cancelButton="false" defaultButton="false" layoutX="361.0" layoutY="29.0" minWidth="25.0" mnemonicParsing="false" onAction="#loadOriginal" prefWidth="37.0" text="..." />
+  <Button fx:id="browseWatermarkButton" layoutX="360.0" layoutY="65.0" mnemonicParsing="false" onAction="#loadWatermark" prefWidth="37.0" text="..." />
+  <padding>
+    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+  </padding>
+  <Label layoutX="306.0" layoutY="106.0" text="Alignment" />
+  <Group id="Group" layoutX="291.0" layoutY="140.0">
+    <children>
+      <Rectangle fx:id="topLeft" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="0.0" layoutY="0.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle fx:id="topCenter" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="35.0" layoutY="0.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle fx:id="topRight" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="70.0" layoutY="0.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle fx:id="centerLeft" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="0.0" layoutY="35.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle fx:id="centerCenter" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="35.0" layoutY="35.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle fx:id="centerRight" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="70.0" layoutY="35.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle fx:id="bottomLeft" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="0.0" layoutY="70.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle fx:id="bottomCenter" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="35.0" layoutY="70.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle fx:id="bottomRight" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="25.0" layoutX="70.0" layoutY="70.0" onMouseClicked="#setAlignment" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+    </children>
+  </Group>
+  <ImageView fx:id="mainImageView" fitHeight="75.0" fitWidth="100.0" layoutX="20.0" layoutY="140.0" pickOnBounds="true" preserveRatio="true" />
+  <ImageView fx:id="watermarkImageView" fitHeight="75.0" fitWidth="100.0" layoutX="143.0" layoutY="140.0" pickOnBounds="true" preserveRatio="true" />
+  <Label layoutX="14.0" layoutY="106.0" text="Original Image" />
+  <Label layoutX="150.0" layoutY="106.0" text="Watermark Image" />
+  <Label fx:id="errorLabel" layoutX="14.0" layoutY="242.0" text="" textFill="#cc0000" />
+  <Button layoutX="409.0" layoutY="28.0" minWidth="29.0" mnemonicParsing="false" prefWidth="77.0" text="Reload" />
+  <Button layoutX="409.0" layoutY="65.0" minWidth="29.0" mnemonicParsing="false" prefWidth="77.0" text="Reload" />
+</Pane>

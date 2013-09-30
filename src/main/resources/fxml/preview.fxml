@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.*?>
+
+<Pane fx:id="previewPane" maxHeight="-1.0" maxWidth="-1.0" minHeight="480.0" minWidth="640.0" prefHeight="350.0" prefWidth="500.0" styleClass="main-panel" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <ImageView fx:id="preview" fitHeight="479.0" fitWidth="638.6666666666666" layoutX="1.0" layoutY="1.0" pickOnBounds="true" preserveRatio="false" />
+  </children>
+</Pane>
