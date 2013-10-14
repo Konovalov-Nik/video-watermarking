@@ -72,6 +72,10 @@ public class ConverterThread extends Thread {
             for (int i = 0; i < frameCount; i++) {
                 updateProgress(i, frameCount);
 
+                if (Thread.currentThread().isInterrupted()){
+                    return;
+                }
+
                 MP4Packet packet = videoTrack.nextFrame();
                 Picture picture;
                 try {
@@ -105,10 +109,16 @@ public class ConverterThread extends Thread {
             muxer.writeHeader();
         } catch (Exception e) {
             throw new RuntimeException("Error during processing", e);
+        } finally {
+          releaseButton();
         }
     }
 
     private void updateProgress(long current, long total) {
         core.setProgress((double)current / (double)total);
+    }
+
+    private void releaseButton() {
+        core.enableRenderButton();
     }
 }

@@ -37,6 +37,7 @@ public class FormController {
     @FXML private TextField originalFileNameField;
     @FXML private TextField outputFileNameField;
     @FXML private Button applyButton;
+    @FXML private Button saveButton;
     @FXML private Button browseOriginalButton;
     @FXML private Button browseWatermarkButton;
     @FXML private Button browseOutputButton;
@@ -145,6 +146,11 @@ public class FormController {
 
     }
 
+    public void cancelConvert() {
+        core.interruptCovert();
+    }
+
+
     private boolean isVideo(File file) {
         return true;
     }
@@ -227,6 +233,14 @@ public class FormController {
     public class ProgressSetter {
         public void setProgress(double progress) {
             conversionProgressBar.setProgress(progress);
+        }
+
+        public void enableRenderButton() {
+            saveButton.setDisable(false);
+        }
+
+        public void disableRenderButton() {
+            saveButton.setDisable(true);
         }
     }
 }

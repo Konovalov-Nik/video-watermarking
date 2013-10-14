@@ -30,6 +30,7 @@ public class Core {
     private VerticalAlignment verticalAlignment;
     private volatile BufferedImage combinedImage;
 
+    private ConverterThread converterThread;
     private FormController.ProgressSetter progressSetter;
 
     public void processImage() throws Exception {
@@ -68,6 +69,10 @@ public class Core {
     }
 
     public void processVideo() throws Exception {
+        if (converterThread != null && converterThread.isAlive()) {
+            throw new Exception("Convert is already running");
+        }
+
         if (videoInputPath == null) {
             throw new Exception("Video input is not specified.");
         }
@@ -76,12 +81,17 @@ public class Core {
             throw new Exception("Video output is not specified.");
         }
 
-        ConverterThread converterThread = new ConverterThread(this, videoInputPath, videoOutputPath);
+        progressSetter.disableRenderButton();
+        converterThread = new ConverterThread(this, videoInputPath, videoOutputPath);
         converterThread.start();
     }
 
     public void setProgress(double progress) {
         progressSetter.setProgress(progress);
+    }
+
+    public void enableRenderButton() {
+        progressSetter.enableRenderButton();
     }
 
     private int calculateOffset(int original, int watermark, Alignment alignment) {
@@ -93,6 +103,13 @@ public class Core {
         }
 
         return original / 2 - watermark / 2;
+    }
+
+    public void interruptCovert() {
+        if (converterThread == null || !converterThread.isAlive()) {
+            return;
+        }
+        converterThread.interrupt();
     }
 
     public BufferedImage getCombinedImage() {

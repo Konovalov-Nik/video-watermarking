@@ -45,4 +45,5 @@
   <Label fx:id="errorLabel" layoutX="14.0" layoutY="266.0" text="" textFill="#cc0000" />
   <Button fx:id="saveButton" layoutX="361.0" layoutY="209.0" mnemonicParsing="false" onAction="#saveResultFile" prefWidth="127.0" text="Render and Save" />
   <ProgressBar fx:id="conversionProgressBar" layoutX="14.0" layoutY="304.0" prefWidth="474.0" progress="0.0" />
+  <Button fx:id="cancelButton" layoutX="361.0" layoutY="249.0" mnemonicParsing="false" onAction="#cancelConvert" prefWidth="125.0" text="Cancel" />
 </Pane>
