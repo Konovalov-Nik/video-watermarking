@@ -11,6 +11,5 @@ test-result
 logs
 
 # Package Files #
-*.jar
 *.war
 *.ear

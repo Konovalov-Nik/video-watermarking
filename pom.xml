@@ -4,15 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.sgu</groupId>
-    <artifactId>imgwatermarking</artifactId>
-    <name>imgwatermarking</name>
+    <artifactId>videowatermarking</artifactId>
+    <name>videowatermarking</name>
 
     <packaging>jar</packaging>
     <version>1.0</version>
     
     <organization>
         <!-- Used as the 'Vendor' for JNLP generation -->
-        <name>Your Organisation</name>
+        <name>Saratov State University</name>
     </organization>
 
     <properties>
@@ -92,7 +92,13 @@
             <artifactId>guava</artifactId>
             <version>15.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jcodec</groupId>
+            <artifactId>jcodec</artifactId>
+            <version>0.1.7.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jcodec-0.1.7-1.jar</systemPath>
+        </dependency>
     </dependencies>
 
 </project>

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import watermarking.allignments.Alignment;
 import watermarking.allignments.HorizontalAlignment;
 import watermarking.allignments.VerticalAlignment;
+import watermarking.controllers.FormController;
 import watermarking.providers.ImageProvider;
 
 import javax.imageio.ImageIO;
@@ -18,15 +19,20 @@ import java.io.ByteArrayInputStream;
 public class Core {
     private static final Logger log = Logger.getLogger(Core.class);
 
-    private ImageProvider baseImageProvider;
-    private ImageProvider watermarkImageProvider;
+    private volatile ImageProvider baseImageProvider;
+    private volatile ImageProvider watermarkImageProvider;
+
+    private String videoInputPath;
+    private String videoOutputPath;
 
     private HorizontalAlignment horizontalAlignment;
+
     private VerticalAlignment verticalAlignment;
+    private volatile BufferedImage combinedImage;
 
-    private BufferedImage combinedImage;
+    private FormController.ProgressSetter progressSetter;
 
-    public void process() throws Exception {
+    public void processImage() throws Exception {
 
         byte[] originalImageBytes = baseImageProvider.getImage();
         byte[] watermarkImageBytes = watermarkImageProvider.getImage();
@@ -59,6 +65,23 @@ public class Core {
 
         combinedImage = combined;
 
+    }
+
+    public void processVideo() throws Exception {
+        if (videoInputPath == null) {
+            throw new Exception("Video input is not specified.");
+        }
+
+        if (videoOutputPath == null) {
+            throw new Exception("Video output is not specified.");
+        }
+
+        ConverterThread converterThread = new ConverterThread(this, videoInputPath, videoOutputPath);
+        converterThread.start();
+    }
+
+    public void setProgress(double progress) {
+        progressSetter.setProgress(progress);
     }
 
     private int calculateOffset(int original, int watermark, Alignment alignment) {
@@ -98,5 +121,29 @@ public class Core {
 
     public ImageProvider getWatermarkImageProvider() {
         return watermarkImageProvider;
+    }
+
+    public String getVideoInputPath() {
+        return videoInputPath;
+    }
+
+    public void setVideoInputPath(String videoInputPath) {
+        this.videoInputPath = videoInputPath;
+    }
+
+    public String getVideoOutputPath() {
+        return videoOutputPath;
+    }
+
+    public void setVideoOutputPath(String videoOutputPath) {
+        this.videoOutputPath = videoOutputPath;
+    }
+
+    public void setProgressSetter(FormController.ProgressSetter progressSetter) {
+        this.progressSetter = progressSetter;
+    }
+
+    public FormController.ProgressSetter getProgressSetter() {
+        return progressSetter;
     }
 }

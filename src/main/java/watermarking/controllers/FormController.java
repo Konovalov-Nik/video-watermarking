@@ -3,11 +3,9 @@ package watermarking.controllers;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,9 +21,8 @@ import watermarking.allignments.HorizontalAlignment;
 import watermarking.allignments.VerticalAlignment;
 import watermarking.providers.ImageProvider;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 
 public class FormController {
     private static final Logger log = LoggerFactory.getLogger(FormController.class);
@@ -38,9 +35,11 @@ public class FormController {
 
     @FXML private TextField watermarkFileNameField;
     @FXML private TextField originalFileNameField;
+    @FXML private TextField outputFileNameField;
     @FXML private Button applyButton;
     @FXML private Button browseOriginalButton;
     @FXML private Button browseWatermarkButton;
+    @FXML private Button browseOutputButton;
     @FXML private Rectangle topLeft;
     @FXML private Rectangle topCenter;
     @FXML private Rectangle topRight;
@@ -55,25 +54,17 @@ public class FormController {
     @FXML private ImageView watermarkImageView;
 
     @FXML private Label errorLabel;
-    
+    @FXML private ProgressBar conversionProgressBar;
+
     public void init() {
         topLeft.setFill(ACTIVE_PAINT);
         core.setVerticalAlignment(VerticalAlignment.TOP);
         core.setHorizontalAlignment(HorizontalAlignment.LEFT);
+        conversionProgressBar.setProgress(0.0);
+        core.setProgressSetter(new ProgressSetter());
     }
 
     public void loadImages() {
-        try {
-            byte[] originalBytes = core.getBaseImageProvider().getImage();
-            if (originalBytes != null) {
-                log.debug("Loading original image.");
-                Image originalImage = new Image(new ByteArrayInputStream(originalBytes));
-                mainImageView.setImage(originalImage);
-            }
-        } catch (Exception e) {
-            log.warn("Could not load original image", e);
-        }
-
         try {
             byte[] watermarkBytes = core.getWatermarkImageProvider().getImage();
             if (watermarkBytes != null) {
@@ -88,9 +79,9 @@ public class FormController {
 
     public void browseOriginal(ActionEvent event) {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Choose original image.");
+        chooser.setTitle("Choose original video.");
         File file = chooser.showOpenDialog(stage);
-        renderAndSaveOriginal(file);
+        saveOriginal(file);
     }
 
     public void browseWatermark(ActionEvent event) {
@@ -100,9 +91,20 @@ public class FormController {
         renderAndSaveWatermark(file);
     }
 
+    public void browseOutput(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choose output file.");
+        File file = chooser.showSaveDialog(stage);
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            outputFileNameField.setText(path);
+            core.setVideoOutputPath(path);
+        }
+    }
+
     public void reloadOriginal(ActionEvent event) {
         File file = new File(originalFileNameField.getText());
-        renderAndSaveOriginal(file);
+        saveOriginal(file);
     }
 
     public void reloadWatermark(ActionEvent event) {
@@ -110,14 +112,15 @@ public class FormController {
         renderAndSaveWatermark(file);
     }
 
-    public void renderAndSaveOriginal(File file) {
-        ImageProvider baseImageProvider = core.getBaseImageProvider();
-        if (file != null && isImage(file)) {
+    public void setOutput(ActionEvent event) {
+        core.setVideoOutputPath(outputFileNameField.getText());
+    }
+
+    public void saveOriginal(File file) {
+        if (file != null && isVideo(file)) {
             String path = file.getAbsolutePath();
-            baseImageProvider.reset();
             originalFileNameField.setText(path);
-            baseImageProvider.setSource(path);
-            loadImages();
+            core.setVideoInputPath(path);
         }
     }
 
@@ -135,71 +138,21 @@ public class FormController {
     public void saveResultFile(ActionEvent event) {
         errorLabel.setText("");
         try {
-            core.process();
-
-            FileChooser chooser = new FileChooser();
-            chooser.setTitle("Save result.");
-            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG files", "*.png", "(*.png)"));
-            File file = chooser.showSaveDialog(stage);
-
-            if (file == null) {
-                return;
-            }
-
-            try {
-                ImageIO.write(core.getCombinedImage(), "png", file);
-            } catch (IOException e) {
-                log.warn("Exception while saving image", e);
-                errorLabel.setText("Could not save result image");
-            }
+            core.processVideo();
         } catch (Exception e) {
-            log.warn("Exception while saving image", e);
             errorLabel.setText(e.getMessage());
         }
+
+    }
+
+    private boolean isVideo(File file) {
+        return true;
     }
 
     private boolean isImage(File file) {
         return true;
     }
 
-    public void showPreview(ActionEvent event) {
-        errorLabel.setText("");
-        try {
-            core.process();
-            buildAndShowPreviewForm();
-        } catch (Exception e) {
-            errorLabel.setText(e.getMessage());
-        }
-    }
-
-    private void buildAndShowPreviewForm() throws IOException {
-
-        BufferedImage previewImage = core.getCombinedImage();
-        int previewImageWidth = previewImage.getWidth();
-        int previewImageHeight = previewImage.getHeight();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(previewImage, "png", outputStream);
-        byte[] imageBytes = outputStream.toByteArray();
-
-        Stage previewStage = new Stage();
-        PreviewController controller = new PreviewController(imageBytes, previewImageWidth, previewImageHeight);
-
-        String fxmlFile = "/fxml/preview.fxml";
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-
-        loader.setController(controller);
-        Parent rootNode = (Parent) loader.load();
-
-
-        Scene scene = new Scene(rootNode, previewImageWidth, previewImageHeight);
-
-        previewStage.setTitle("Preview");
-        previewStage.setScene(scene);
-
-        previewStage.show();
-        controller.init();
-    }
 
     public void setAlignment(MouseEvent event) {
         EventTarget target = event.getTarget();
@@ -248,7 +201,7 @@ public class FormController {
 
         resetButtons();
 
-        ((Rectangle)target).setFill(ACTIVE_PAINT);
+        ((Rectangle) target).setFill(ACTIVE_PAINT);
     }
 
     private void resetButtons() {
@@ -269,5 +222,11 @@ public class FormController {
 
     public void setCore(Core core) {
         this.core = core;
+    }
+
+    public class ProgressSetter {
+        public void setProgress(double progress) {
+            conversionProgressBar.setProgress(progress);
+        }
     }
 }
