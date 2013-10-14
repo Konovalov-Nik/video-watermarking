@@ -31,7 +31,8 @@ public class Core {
     private volatile BufferedImage combinedImage;
 
     private ConverterThread converterThread;
-    private FormController.ProgressSetter progressSetter;
+    private Exception convertThreadException;
+    private FormController.Delegate delegate;
 
     public void processImage() throws Exception {
 
@@ -81,17 +82,17 @@ public class Core {
             throw new Exception("Video output is not specified.");
         }
 
-        progressSetter.disableRenderButton();
+        delegate.disableRenderButton();
         converterThread = new ConverterThread(this, videoInputPath, videoOutputPath);
         converterThread.start();
     }
 
     public void setProgress(double progress) {
-        progressSetter.setProgress(progress);
+        delegate.setProgress(progress);
     }
 
     public void enableRenderButton() {
-        progressSetter.enableRenderButton();
+        delegate.enableRenderButton();
     }
 
     private int calculateOffset(int original, int watermark, Alignment alignment) {
@@ -156,11 +157,16 @@ public class Core {
         this.videoOutputPath = videoOutputPath;
     }
 
-    public void setProgressSetter(FormController.ProgressSetter progressSetter) {
-        this.progressSetter = progressSetter;
+    public void setDelegate(FormController.Delegate delegate) {
+        this.delegate = delegate;
     }
 
-    public FormController.ProgressSetter getProgressSetter() {
-        return progressSetter;
+    public FormController.Delegate getDelegate() {
+        return delegate;
+    }
+
+    public void setConvertThreadException(Exception convertThreadException) {
+        this.convertThreadException = convertThreadException;
+        delegate.passException(convertThreadException);
     }
 }

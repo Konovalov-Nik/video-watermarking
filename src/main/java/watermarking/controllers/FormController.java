@@ -62,7 +62,7 @@ public class FormController {
         core.setVerticalAlignment(VerticalAlignment.TOP);
         core.setHorizontalAlignment(HorizontalAlignment.LEFT);
         conversionProgressBar.setProgress(0.0);
-        core.setProgressSetter(new ProgressSetter());
+        core.setDelegate(new Delegate());
     }
 
     public void loadImages() {
@@ -143,7 +143,6 @@ public class FormController {
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());
         }
-
     }
 
     public void cancelConvert() {
@@ -230,7 +229,7 @@ public class FormController {
         this.core = core;
     }
 
-    public class ProgressSetter {
+    public class Delegate {
         public void setProgress(double progress) {
             conversionProgressBar.setProgress(progress);
         }
@@ -241,6 +240,10 @@ public class FormController {
 
         public void disableRenderButton() {
             saveButton.setDisable(true);
+        }
+
+        public void passException(Exception e) {
+            errorLabel.setText(e.getMessage());
         }
     }
 }

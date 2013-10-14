@@ -20,6 +20,7 @@ import utils.ConverterUtils;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,7 +109,11 @@ public class ConverterThread extends Thread {
 
             muxer.writeHeader();
         } catch (Exception e) {
-            throw new RuntimeException("Error during processing", e);
+            if (e instanceof ClosedByInterruptException) {
+                core.setConvertThreadException(new Exception("Interrupted"));
+                return;
+            }
+            core.setConvertThreadException(e);
         } finally {
           releaseButton();
         }
